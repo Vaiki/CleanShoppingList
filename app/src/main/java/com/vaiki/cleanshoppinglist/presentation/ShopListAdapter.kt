@@ -7,23 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.vaiki.cleanshoppinglist.R
 import com.vaiki.cleanshoppinglist.domain.ShopItem
 
-class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
-    var count = 0
-    var shopList = listOf<ShopItem>()
-        @SuppressLint("NotifyDataSetChanged")
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+class ShopListAdapter : ListAdapter<ShopItem,ShopListAdapter.ShopItemViewHolder>(ShopItemDiffCallback()) {
+
     var onShopItemLongClickListener: ((ShopItem)-> Unit)? = null
     var onItemClickListener: ((ShopItem)-> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
-        Log.d("ShopAdapter", "onCreateViewHolder, count: ${++count}")
+
         val layout = when (viewType) {
             ENABLE_VIEW_TYPE -> R.layout.item_shop_enabled
             DISABLE_VIEW_TYPE -> R.layout.item_shop_disabled
@@ -39,7 +34,8 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
-        val shopItem = shopList[position]
+       //getItem(position) - получить объект по его позиции
+        val shopItem = getItem(position)
 
         holder.view.setOnLongClickListener {
             onShopItemLongClickListener?.invoke(shopItem)
@@ -51,12 +47,8 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
 
     }
 
-    override fun getItemCount(): Int {
-        return shopList.size
-    }
-
     override fun getItemViewType(position: Int): Int {
-        val item = shopList[position]
+        val item = getItem(position)
         return if (item.enable) {
             ENABLE_VIEW_TYPE
         } else {
