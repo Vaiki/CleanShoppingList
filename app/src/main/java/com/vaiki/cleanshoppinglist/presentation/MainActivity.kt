@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.shopList.observe(this) {
-          //внутри адаптера запускается новый поток, в котором происходят вычисления DiffCallback
+            //внутри адаптера запускается новый поток, в котором происходят вычисления DiffCallback
             // submitList() - передать список с liveData в RV или обновить
             shopListAdapter.submitList(it)
         }
@@ -31,7 +31,8 @@ class MainActivity : AppCompatActivity() {
         shopListAdapter = ShopListAdapter()
         with(rvShopList) {
             adapter = shopListAdapter
-            //
+            // задаем пул вьюх, чтобы не плодить новые,
+            // при недостатке данных в стандартном размере пула
             recycledViewPool.setMaxRecycledViews(
                 ShopListAdapter.ENABLE_VIEW_TYPE,
                 ShopListAdapter.MAX_POOL_SIZE
