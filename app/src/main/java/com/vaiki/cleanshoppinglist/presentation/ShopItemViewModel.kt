@@ -26,9 +26,10 @@ class ShopItemViewModel : ViewModel() {
         get() = _errorInputCount
 
     private val _shopItem = MutableLiveData<ShopItem>()
-    val shopItemId: LiveData<ShopItem>
+    val shopItem: LiveData<ShopItem>
         get() = _shopItem
 
+    //маркер, что операции все выполнены и можно закрыть скрин
     private val _shouldCloseScreen = MutableLiveData<Boolean>()
     val shouldCloseScreen: LiveData<Boolean>
         get() = _shouldCloseScreen
@@ -83,17 +84,17 @@ class ShopItemViewModel : ViewModel() {
         }
 
         if (count <= 0) {
-            _errorInputCount.value = false
+            _errorInputCount.value = true
             result = false
         }
         return result
     }
 
-    private fun resetErrorInputName() {
-        _errorInputName.value = true
+    fun resetErrorInputName() {
+        _errorInputName.value = false
     }
 
-    private fun resetErrorInputCount() {
-        _errorInputCount.value = true
+    fun resetErrorInputCount() {
+        _errorInputCount.value = false
     }
 }

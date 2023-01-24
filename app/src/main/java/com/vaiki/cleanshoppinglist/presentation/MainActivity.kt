@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.vaiki.cleanshoppinglist.R
 import com.vaiki.cleanshoppinglist.domain.ShopItem
 
@@ -23,7 +24,11 @@ class MainActivity : AppCompatActivity() {
             // submitList() - передать список с liveData в RV или обновить
             shopListAdapter.submitList(it)
         }
-
+        val btnAdd = findViewById<FloatingActionButton>(R.id.btn_add_shop_item)
+        btnAdd.setOnClickListener {
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -70,7 +75,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickItemListener() {
         shopListAdapter.onItemClickListener = {
-            Toast.makeText(this, it.name, Toast.LENGTH_SHORT).show()
+            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+            startActivity(intent)
         }
     }
 
