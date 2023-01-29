@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.vaiki.cleanshoppinglist.R
 import com.vaiki.cleanshoppinglist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
@@ -73,5 +73,9 @@ class ShopItemActivity : AppCompatActivity() {
             return intent
         }
 
+    }
+
+    override fun onEditingFinish() {
+        finish()
     }
 }

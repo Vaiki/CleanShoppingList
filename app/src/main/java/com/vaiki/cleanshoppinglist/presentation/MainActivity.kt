@@ -13,7 +13,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.vaiki.cleanshoppinglist.R
 import com.vaiki.cleanshoppinglist.domain.ShopItem
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),ShopItemFragment.OnEditingFinishedListener {
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private var shopItemContainer: FragmentContainerView? = null
@@ -120,6 +120,12 @@ class MainActivity : AppCompatActivity() {
             {
                 viewModel.changeEnableState(it)
             }
+    }
+
+    override fun onEditingFinish() {
+        Toast.makeText(this,"Success", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
+
     }
 
 }

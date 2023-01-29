@@ -1,5 +1,6 @@
 package com.vaiki.cleanshoppinglist.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,10 +23,18 @@ class ShopItemFragment : Fragment() {
     private lateinit var etName: EditText
     private lateinit var etCount: EditText
     private lateinit var btnSave: Button
-
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException("Activity must implement OnEditingFinishedListener")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +78,10 @@ class ShopItemFragment : Fragment() {
         }
 
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
+
+            onEditingFinishedListener.onEditingFinish()
             //имитируем нажатие "Back"
-            activity?.onBackPressed()
+            //activity?.onBackPressed()
             //можно вызвать requireActivity().onBackPressed(),
             //разница в том, что если при вызове requiredActivity фрагмент еще не присоединился
             // к активити(onAttach) или уже отсоединился от активити (onDetach),
@@ -160,6 +171,9 @@ class ShopItemFragment : Fragment() {
         btnSave = view.findViewById(R.id.btn_save)
     }
 
+    interface OnEditingFinishedListener {
+        fun onEditingFinish()
+    }
 
     companion object {
         private const val SCREEN_MODE = "extra_mode"
