@@ -15,7 +15,10 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
         parseIntent()
-        launchRightMode()
+        //проверяем создается активити с нуля или пересоздается,
+        // что бы не дублировать создание фрагмента
+        if(savedInstanceState == null){
+        launchRightMode()}
     }
 
 
@@ -26,7 +29,8 @@ class ShopItemActivity : AppCompatActivity() {
             else -> throw RuntimeException("Unknown screen mode $screenMode")
         }
         supportFragmentManager.beginTransaction()
-            .add(R.id.shop_item_container, fragment)
+                //add добавляет фрагмент наверх, replace заменяет страрый фрагмент текущим
+            .replace(R.id.shop_item_container, fragment)
             .commit()
     }
 

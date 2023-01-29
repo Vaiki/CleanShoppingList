@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -14,9 +16,15 @@ import com.vaiki.cleanshoppinglist.domain.ShopItem
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
+    private var shopItemContainer: FragmentContainerView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        shopItemContainer = findViewById(R.id.shop_item_container)
+
+
+
         setupRecyclerView()
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.shopList.observe(this) {
@@ -25,10 +33,32 @@ class MainActivity : AppCompatActivity() {
             shopListAdapter.submitList(it)
         }
         val btnAdd = findViewById<FloatingActionButton>(R.id.btn_add_shop_item)
-        btnAdd.setOnClickListener {
-            val intent = ShopItemActivity.newIntentAddItem(this)
-            startActivity(intent)
+        if (isOnePaneMode()) {
+            btnAdd.setOnClickListener {
+                val intent = ShopItemActivity.newIntentAddItem(this)
+                startActivity(intent)
+            }
+        } else {
+            launchFragment(ShopItemFragment.newInstanceAddItem())
         }
+    }
+
+    //проверяем в какой ориентации приложение
+    private fun isOnePaneMode(): Boolean {
+        return shopItemContainer == null
+    }
+
+    //в режиме ландшафта вызываем fragment
+    private fun launchFragment(fragment: Fragment) {
+
+        //убирает прошлый фрагмент с backstack,
+        // чтобы если нажать back мы не вернулись к предыдущему фрагменту
+        supportFragmentManager.popBackStack()
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupRecyclerView() {
@@ -74,9 +104,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupClickItemListener() {
+
         shopListAdapter.onItemClickListener = {
-            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
-            startActivity(intent)
+            if (isOnePaneMode()) {
+                val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+                startActivity(intent)
+            } else {
+                launchFragment(ShopItemFragment.newInstanceEditItem(it.id))
+            }
         }
     }
 
